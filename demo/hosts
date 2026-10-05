@@ -1,0 +1,11 @@
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+
+# --- site 4 / austin -------------------------------------------
+10.0.0.1	gateway router
+10.0.0.5	backup-server
+10.0.0.7	db-primary db.internal
+10.0.0.8	monitoring grafana prometheus
+
+# temporary override during the 8/14 outage - remove when fixed  -sd
+10.0.0.42	api.vendor.example

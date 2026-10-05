@@ -1,0 +1,33 @@
+THE PROMPT
+==========
+
+Every model in this session was given exactly this, and nothing else:
+
+    Write a bash script to add backup-server at 10.0.0.9 to /etc/hosts.
+
+
+CLEAN-ROOM CONDITIONS
+---------------------
+* Run in an empty directory, outside any project.
+* No rules file, no CLAUDE.md, no AGENTS.md, no system prompt of mine.
+* No mention of this talk, this audience, or anything the session had covered.
+* No follow-up prompting. The first answer is the answer.
+
+Local models (llama3.2:3b, Qwen2.5-7B-Instruct, gemma3:12b) were run through
+Ollama on a local machine. The frontier models were run in a fresh session with
+persistence disabled.
+
+
+THE ONLY CHANGES I MADE TO THEIR CODE
+-------------------------------------
+Two lines, in every case, so the scripts could run on stage without destroying
+the laptop they were running on:
+
+    1. The target file was pointed at a throwaway copy  ("./hosts")
+       instead of the real /etc/hosts.
+
+    2. The "you must be root" check was disabled, so it would run
+       without sudo.
+
+Nothing else was touched. No logic, no messages, no exit codes, no formatting.
+The verbatim originals are in models/ so you can diff them yourself.

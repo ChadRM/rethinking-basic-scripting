@@ -1,0 +1,21 @@
+# Example rules file -- drop this in as CLAUDE.md, AGENTS.md or .cursorrules
+#
+# This is the file from the slide. Every rule in it is a scar: something that
+# went wrong in the session, written down so the generator reads it every time.
+# Steal it, edit it, delete half of it. The point is that it exists.
+
+## Editing config files on managed hosts
+
+Never edit in place. Write a temp file and move it over the original,
+preserving inode, owner and mode.
+
+Back up to <name>.bak.YYYY-MM-DD -- never .bak, .old or .new. A backup
+the next run overwrites is not a backup.
+
+If a key you manage appears more than once, STOP. Do not guess, do not
+dedupe. Log the hostname and exit non-zero.
+
+If the target is a symlink, unwritable, or owned by another user, STOP
+and say which one it was.
+
+Never report success on a path you did not verify by re-reading the file.

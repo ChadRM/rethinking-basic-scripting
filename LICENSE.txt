@@ -1,0 +1,38 @@
+================================================================================
+                    FOR REFERENCE ONLY -- ALL RIGHTS RESERVED
+================================================================================
+
+   "Rethinking What You Already Know: Basic Scripting"
+   and all accompanying materials, slides, speaker notes, scripts,
+   captures and documentation contained in this archive
+
+                    Copyright (c) 2026 Chad Miller
+                         All rights reserved.
+
+--------------------------------------------------------------------------------
+
+THIS MATERIAL IS PROVIDED FOR YOUR PERSONAL REFERENCE ONLY.
+
+No portion of this work -- in whole or in part, in any form or by any means,
+electronic, mechanical, photographic, or otherwise now known or hereafter
+devised -- may be reproduced, republished, redistributed, transmitted,
+displayed, performed, adapted, excerpted, translated, or used to prepare
+derivative works, nor delivered or presented to any audience, internal or
+external, paying or otherwise, by any person or entity, living or dead,
+without the express prior WRITTEN permission of Chad Miller.
+
+Receipt of this archive conveys no license, no assignment, and no transfer
+of any right, title or interest whatsoever. Nothing herein shall be construed
+as granting, by implication, estoppel, or otherwise, any license or right.
+
+The scripts in demo/ and powershell/ are provided as teaching artifacts. They
+are deliberately imperfect in places, by design, for instructional purposes.
+They are provided WITHOUT WARRANTY OF ANY KIND. Do not run them against a
+production host. Do not ask them how they feel about it.
+
+                    Chad Miller  .  Austin, Texas  .  2026
+                         chad.r.miller@gmail.com
+                    linkedin.com/in/chadryanmiller
+                           github.com/ChadRM
+
+================================================================================

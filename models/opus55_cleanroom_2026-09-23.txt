@@ -1,0 +1,62 @@
+I wrote the script to `/tmp/cleanroom-j8qh/add-backup-server-host.sh` and made it executable. It passes a bash syntax check, but I haven't run it or tested it against a real hosts file, because it changes `/etc/hosts` on whatever machine it runs on.
+
+What it does:
+- **Gets root:** if you're not root, it restarts itself with `sudo`.
+- **Safe to rerun:** if `10.0.0.9 backup-server` is already there, it says so and exits without changing anything.
+- **Backs up first:** before any change, it copies the file to `/etc/hosts.bak.<timestamp>`.
+- **Fixes a wrong entry:** if `backup-server` is listed under a different IP, it deletes that whole line. Any other names on that line are deleted with it.
+- **Adds the entry:** it appends `10.0.0.9<TAB>backup-server` to the end of the file.
+
+Run it with:
+```bash
+./add-backup-server-host.sh
+```
+
+If you want this on a specific host, tell me which one and I'll deploy and run it there.
+#!/usr/bin/env bash
+# Add (or update) the backup-server entry in /etc/hosts.
+# Idempotent: safe to run repeatedly.
+set -euo pipefail
+
+HOSTS_FILE="/etc/hosts"
+IP="10.0.0.9"
+NAME="backup-server"
+
+if [[ $EUID -ne 0 ]]; then
+    exec sudo -- "$0" "$@"
+fi
+
+# Already correct? Nothing to do.
+if grep -qE "^[[:space:]]*${IP//./\\.}[[:space:]]+([^#]*[[:space:]])?${NAME}([[:space:]]|$)" "$HOSTS_FILE"; then
+    echo "$NAME -> $IP already present in $HOSTS_FILE"
+    exit 0
+fi
+
+cp -p "$HOSTS_FILE" "${HOSTS_FILE}.bak.$(date +%Y%m%d%H%M%S)"
+
+# If the name is mapped to a different IP, remove that mapping first.
+if grep -qE "^[^#]*[[:space:]]${NAME}([[:space:]]|$)" "$HOSTS_FILE"; then
+    echo "Replacing existing $NAME entry"
+    sed -i -E "/^[^#]*[[:space:]]${NAME}([[:space:]]|$)/d" "$HOSTS_FILE"
+fi
+
+printf '%s\t%s\n' "$IP" "$NAME" >> "$HOSTS_FILE"
+echo "Added $NAME -> $IP to $HOSTS_FILE"
+
+═══════════════════════════════════════════════════════════════════════
+VERIFIED FAILURE PATHS — run 2026-09-23 on detritus, hosts file localized
+═══════════════════════════════════════════════════════════════════════
+A. TIER-1 LEFTOVER   10.0.0.5 backup-server / 10.0.0.9 backup-server
+   -> "backup-server -> 10.0.0.9 already present"  exit 0  NOTHING CHANGED
+   -> first match is still 10.0.0.5.  IDENTICAL FAILURE TO OPUS 5.
+B. THREE CONFLICTING  .5 / .6 / .7 all named backup-server
+   -> "Replacing existing backup-server entry" -> collapsed 3 lines to 1. IT GUESSED. exit 0.
+C. MULTI-ALIAS LINE  "10.0.0.5  fileserver  backup-server  nas  storage"
+   -> fileserver, nas, storage ALL DELETED. Message: "Replacing existing backup-server entry."
+   -> REGRESSION: Opus 5 preserved multi-hostname lines (awk stripped only the name).
+D. SYMLINK  hosts -> real_hosts
+   -> symlink REPLACED WITH A REGULAR FILE. real_hosts still 10.0.0.5, now orphaned.
+   -> REGRESSION: Opus 5 wrote in place to preserve the inode, with that reasoning in a comment.
+E. READ-ONLY (444)
+   -> sed -i SUCCEEDS (rewrites via the directory), append fails "Permission denied", EXIT 1.
+   -> FILE NOW HAS NO backup-server ENTRY AT ALL. Worse than doing nothing.
